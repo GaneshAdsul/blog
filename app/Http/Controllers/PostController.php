@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -14,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        return view('Posts.home');
     }
 
     /**
@@ -24,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('Posts.createPost');
     }
 
     /**
@@ -35,7 +36,31 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|unique:posts,title|max:255',
+            'body' => 'required|min:10|max:255'
+        ]);
+        // $is_stored = Post::create([
+        //                     'title' => $request->title,
+        //                     'body' => $request->body,
+        //                     'user_id' => auth()->user()->id 
+        // ]);
+        $is_stored = DB::table('posts')
+                        ->insert([
+                            'title' => $request->title,
+                            'body' => $request->body,
+                            'user_id' => auth()->user()->id,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);    
+        if ($is_stored) {
+            return redirect('/posts');
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'something went wrong'
+            ]);
+        }
     }
 
     /**
