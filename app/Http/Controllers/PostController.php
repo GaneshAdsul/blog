@@ -15,7 +15,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('Posts.home');
+        // $posts = DB::table('posts')->get();
+        // return view('Posts.home', ['posts' => $posts]);
+        return view('Posts.post', ['posts' => Post::all()]);
     }
 
     /**
@@ -69,9 +71,10 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(Request $request)
     {
-        //
+        $post = DB::table('posts')->where('id', $request->id)->first();
+        return view('Posts.showPost', ['post' => $post]);
     }
 
     /**
